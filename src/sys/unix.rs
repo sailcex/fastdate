@@ -52,7 +52,7 @@ fn tm_to_rust_tm(tm: &libc::tm, utcoff: i32, rust_tm: &mut Tm) {
     rust_tm.tm_utcoff = utcoff;
 }
 
-#[cfg(any(target_os = "nacl", target_os = "solaris", target_os = "illumos"))]
+#[cfg(any(target_os = "solaris", target_os = "illumos"))]
 unsafe fn timegm(tm: *mut libc::tm) -> time_t {
     use std::env::{remove_var, set_var, var_os};
     extern "C" {
@@ -106,7 +106,6 @@ pub fn time_to_local_tm(sec: i64, tm: &mut Tm) {
 pub fn utc_tm_to_time(rust_tm: &Tm) -> i64 {
     #[cfg(not(any(
         all(target_os = "android", target_pointer_width = "32"),
-        target_os = "nacl",
         target_os = "solaris",
         target_os = "illumos"
     )))]

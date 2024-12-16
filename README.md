@@ -1,13 +1,8 @@
 # fastdate
 
-[![codecov](https://codecov.io/gh/rbatis/fastdate/graph/badge.svg?token=C97H2QBHAQ)](https://codecov.io/gh/rbatis/fastdate)
-
-<img style="width: 200px;height: 200px;" width="200" height="200" src="https://github.com/rbatis/rbatis/blob/master/logo.png?raw=true" />
-
 fastdate of Any RFC3339Micro
 
-
-## way fastdate?
+## why fastdate?
 * full test, Code testing coverage >= 99%
 * Powerful, easy to use
 * based on crate `time`
@@ -38,27 +33,17 @@ this date cartes is very fast(<= 50ns) including
 * from(arg: Time)
 * cmp(&self, other: &DateTime)/>/</>=/<= and more....
 
-```log
-test bench_add                         ... bench:          14 ns/iter (+/- 0)
-test bench_date_display                ... bench:          49 ns/iter (+/- 2)
-test bench_date_from_str_iso_8601      ... bench:         129 ns/iter (+/- 6)
-test bench_date_from_str_iso_8601_time ... bench:          69 ns/iter (+/- 2)
-test bench_date_now_local              ... bench:          65 ns/iter (+/- 2)
-test bench_date_parse_format           ... bench:         282 ns/iter (+/- 11)
-test bench_date_utc                    ... bench:          49 ns/iter (+/- 2)
-test bench_datetime_from_str           ... bench:         130 ns/iter (+/- 10)
-test bench_eq                          ... bench:          10 ns/iter (+/- 0)
-test bench_from_timestamp_millis       ... bench:          23 ns/iter (+/- 0)
-test bench_get_micro                   ... bench:           0 ns/iter (+/- 0)
-test bench_set_offset                  ... bench:          12 ns/iter (+/- 0)
-test bench_timestamp                   ... bench:           2 ns/iter (+/- 0)
+```bash
+# aws c7g.large (2C4G)
+$ cargo bench
+
 ```
 
 * how use?
 
 #### add to Cargo.tom dep
 ```toml
-fastdate = "0.3"
+fastdate = "~0.3"
 ```
 
 #### use code
