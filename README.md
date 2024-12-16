@@ -1,3 +1,5 @@
+[![Rust](https://github.com/helicex-rs/fastdate/actions/workflows/rust.yml/badge.svg)](https://github.com/helicex-rs/fastdate/actions/workflows/rust.yml)
+
 # fastdate
 
 fastdate of Any RFC3339Micro
