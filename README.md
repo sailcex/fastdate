@@ -118,7 +118,7 @@ Found 1 outliers among 100 measurements (1.00%)
 
 #### add to Cargo.tom dep
 ```toml
-fastdate = "~0.3"
+fastdate = { git = "https://github.com/helicex-rs/fastdate.git", tag = "v0.3.34" }
 ```
 
 #### use code
