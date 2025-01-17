@@ -150,7 +150,7 @@ impl DateTime {
         }
     }
 
-    /// format support token = ["YYYY","MM","DD","hh","mm","ss",".000000",".000000000","+00:00"]
+    /// format support token = ["YYYY","MM","DD","hh","mm","ss",".000",".000000",".000000000","+00:00"]
     /// ```
     /// let dt = fastdate::DateTime::from((
     ///         fastdate::Date {
@@ -165,6 +165,7 @@ impl DateTime {
     ///             hour: 1,
     ///         })).set_offset(8 * 60 * 60);
     ///   println!("{}",dt.format("YYYY-MM-DD hh:mm:ss"));
+    ///   println!("{}",dt.format("YYYY-MM-DD hh:mm:ss.000"));
     ///   println!("{}",dt.format("YYYY-MM-DD hh:mm:ss.000000"));
     ///   println!("{}",dt.format("YYYY-MM-DD hh:mm:ss.000000+00:00"));
     ///   println!("{}",dt.format("YYYY/MM/DD/hh/mm/ss/.000000/+00:00"));
@@ -200,6 +201,22 @@ impl DateTime {
                     result.pop();
                 }
                 write!(result, ".{:06}", self.nano() / 1000).unwrap();
+            } else if result.ends_with(".000") {
+                if (index + 6) < fmt.len()
+                    && chars[index + 1] == '0' as u8
+                    && chars[index + 2] == '0' as u8
+                    && chars[index + 3] == '0' as u8
+                    && chars[index + 4] == '0' as u8
+                    && chars[index + 5] == '0' as u8
+                    && chars[index + 6] == '0' as u8
+                {
+                    index += 1;
+                    continue;
+                }
+                for _ in 0..".000".len() {
+                    result.pop();
+                }
+                write!(result, ".{:03}", self.nano() / 1000000).unwrap();
             } else if result.ends_with("+00:00") {
                 for _ in 0.."+00:00".len() {
                     result.pop();
@@ -462,11 +479,15 @@ impl DateTime {
             .set_offset(offset)
     }
 
-    /// stand "0000-00-00 00:00:00.000000000"
+    /// stand "0000-00-00T00:00:00.000000000"
     pub fn display_stand(&self) -> String {
-        let mut v = self.display(false);
-        v.replace_range(10..11, " ");
-        v
+        self.display(false)
+    }
+
+    /// stand_ms "0000-00-00T00:00:00.000"
+    pub fn display_stand_ms(&self) -> String {
+        let v = self.display(false);
+        v[..23].to_string()
     }
 
     /// RFC3339 "0000-00-00T00:00:00.000000000Z"

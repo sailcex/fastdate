@@ -1,4 +1,4 @@
-[![Rust](https://github.com/helicex-rs/fastdate/actions/workflows/rust.yml/badge.svg)](https://github.com/helicex-rs/fastdate/actions/workflows/rust.yml)
+[![Rust](https://github.com/sailcex/fastdate/actions/workflows/rust.yml/badge.svg)](https://github.com/sailcex/fastdate/actions/workflows/rust.yml)
 
 # fastdate
 
@@ -118,7 +118,7 @@ Found 1 outliers among 100 measurements (1.00%)
 
 #### add to Cargo.tom dep
 ```toml
-fastdate = { git = "https://github.com/helicex-rs/fastdate.git", tag = "v0.3.34" }
+fastdate = { git = "https://github.com/sailcex/fastdate.git", tag = "v0.3.34" }
 ```
 
 #### use code
