@@ -485,17 +485,37 @@ impl DateTime {
         self.display(false)
     }
 
+     /// stand_ms "0000-00-00T00:00:00.000000"
+    pub fn display_stand_us(&self) -> String {
+        self.display_us(false)
+    }
+
     /// stand_ms "0000-00-00T00:00:00.000"
     pub fn display_stand_ms(&self) -> String {
-        let v = self.display(false);
-        v[..23].to_string()
+        self.display_ms(false)
     }
 
     /// RFC3339 "0000-00-00T00:00:00.000000000Z"
     /// RFC3339 "0000-00-00T00:00:00.000000000+00:00:00"
     pub fn display(&self, zone: bool) -> String {
         let mut buf: [u8; 38] = *b"0000-00-00T00:00:00.000000000+00:00:00";
-        let len = self.do_display(&mut buf, zone);
+        let len = self.do_display(&mut buf, zone, 9);
+        std::str::from_utf8(&buf[..len]).unwrap().to_string()
+    }
+
+    /// RFC3339 "0000-00-00T00:00:00.000000Z"
+    /// RFC3339 "0000-00-00T00:00:00.000000+00:00:00"
+    pub fn display_us(&self, zone: bool) -> String {
+        let mut buf: [u8; 38] = *b"0000-00-00T00:00:00.000000000+00:00:00";
+        let len = self.do_display(&mut buf, zone, 6);
+        std::str::from_utf8(&buf[..len]).unwrap().to_string()
+    }
+
+    /// RFC3339 "0000-00-00T00:00:00.000Z"
+    /// RFC3339 "0000-00-00T00:00:00.000+00:00:00"
+    pub fn display_ms(&self, zone: bool) -> String {
+        let mut buf: [u8; 38] = *b"0000-00-00T00:00:00.000000000+00:00:00";
+        let len = self.do_display(&mut buf, zone, 3);
         std::str::from_utf8(&buf[..len]).unwrap().to_string()
     }
 
@@ -503,7 +523,7 @@ impl DateTime {
     /// than print this:
     /// RFC3339 "0000-00-00T00:00:00.000000000Z"
     /// RFC3339 "0000-00-00T00:00:00.000000000+00:00:00"
-    pub fn do_display(&self, buf: &mut [u8; 38], add_zone: bool) -> usize {
+    pub fn do_display(&self, buf: &mut [u8; 38], add_zone: bool, nano_len: usize) -> usize {
         let year = self.year();
         let mon = self.mon();
         let day = self.day();
@@ -516,7 +536,7 @@ impl DateTime {
         buf[8] = b'0' + (day / 10);
         buf[9] = b'0' + (day % 10);
         let time = Time::from(self.clone());
-        let mut len = time.display_time(11, buf, 9);
+        let mut len = time.display_time(11, buf, nano_len);
         if add_zone {
             let offset = self.offset();
             if offset == 0 {
@@ -770,7 +790,7 @@ impl Display for DateTime {
     /// fmt RFC3339Nano = "2006-01-02T15:04:05.999999999"
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         let mut buf: [u8; 38] = *b"0000-00-00T00:00:00.000000000+00:00:00";
-        let len = self.do_display(&mut buf, true);
+        let len = self.do_display(&mut buf, true, 9);
         f.write_str(std::str::from_utf8(&buf[..len]).unwrap())
     }
 }

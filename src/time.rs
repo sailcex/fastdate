@@ -181,11 +181,23 @@ impl Time {
                     buf[start + 13] = b'0' + (self.nano / 10000 % 10) as u8;
                     buf[start + 14] = b'0' + (self.nano / 1000 % 10) as u8;
 
+                    let mut zero9 = false;
                     if nano_len >= 9 {
                         buf[start + 15] = b'0' + (self.nano / 100 % 10) as u8;
                         buf[start + 16] = b'0' + (self.nano / 10 % 10) as u8;
                         buf[start + 17] = b'0' + (self.nano % 10) as u8;
                         nano_len = 9;
+
+                        if buf[start + 15] == b'0' && buf[start + 16] == b'0' && buf[start + 17] == b'0' {
+                            nano_len -= 3;
+                            zero9 = true;
+                        }
+                    }
+
+                    if zero9 {
+                        if buf[start + 12] == b'0' && buf[start + 13] == b'0' && buf[start + 14] == b'0' {
+                            nano_len -= 3;
+                        }
                     }
                 }
 

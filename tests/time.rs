@@ -114,14 +114,14 @@ fn test_date_123456789() {
 fn test_date_12345678() {
     let d = Time::from_str("11:12:13.12345678").unwrap();
     println!("{}", d);
-    assert_eq!("11:12:13.12345678".to_string(), d.to_string());
+    assert_eq!("11:12:13.123456780".to_string(), d.to_string());
 }
 
 #[test]
 fn test_date_1234567() {
     let d = Time::from_str("11:12:13.1234567").unwrap();
     println!("{}", d);
-    assert_eq!("11:12:13.1234567".to_string(), d.to_string());
+    assert_eq!("11:12:13.123456700".to_string(), d.to_string());
 }
 
 #[test]
@@ -135,14 +135,14 @@ fn test_date_123456() {
 fn test_date_12345() {
     let d = Time::from_str("11:12:13.12345").unwrap();
     println!("{}=>{:?}", d, d);
-    assert_eq!("11:12:13.12345".to_string(), d.to_string());
+    assert_eq!("11:12:13.123450".to_string(), d.to_string());
 }
 
 #[test]
 fn test_date_1234() {
     let d = Time::from_str("11:12:13.1234").unwrap();
     println!("{}=>{:?}", d, d);
-    assert_eq!("11:12:13.1234".to_string(), d.to_string());
+    assert_eq!("11:12:13.123400".to_string(), d.to_string());
 }
 
 #[test]
@@ -156,7 +156,7 @@ fn test_date_123() {
 fn test_date_12() {
     let d = Time::from_str("11:12:13.12").unwrap();
     println!("{}=>{:?}", d, d);
-    assert_eq!("11:12:13.12".to_string(), d.to_string());
+    assert_eq!("11:12:13.120".to_string(), d.to_string());
 }
 
 #[test]
