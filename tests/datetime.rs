@@ -819,7 +819,26 @@ fn test_display_stand() {
         },
     ));
     let v = epoch.display_stand();
-    assert_eq!(v, "2000-01-01 01:01:11.000001233");
+    assert_eq!(v, "2000-01-01T01:01:11.000001233");
+}
+
+#[test]
+fn test_display_stand_ms() {
+    let epoch = fastdate::DateTime::from((
+        Date {
+            day: 1,
+            mon: 1,
+            year: 2000,
+        },
+        Time {
+            nano: 123456000,
+            sec: 11,
+            minute: 1,
+            hour: 1,
+        },
+    ));
+    let v = epoch.display_stand_ms();
+    assert_eq!(v, "2000-01-01T01:01:11.123");
 }
 
 #[test]
@@ -862,10 +881,10 @@ fn test_set_micro() {
         },
     ));
     dt = dt.set_nano(0);
-    assert_eq!(dt.display_stand(), "2000-01-01 01:01:11");
+    assert_eq!(dt.display_stand(), "2000-01-01T01:01:11");
 
     dt = dt.set_nano(1);
-    assert_eq!(dt.display_stand(), "2000-01-01 01:01:11.000001");
+    assert_eq!(dt.display_stand(), "2000-01-01T01:01:11.000001");
 }
 
 #[test]
@@ -883,52 +902,19 @@ fn test_format() {
             hour: 1,
         },
     ));
-    let f = dt.format("YYYY-MM-DD/hh/mm/ss.000000");
-    assert_eq!(f, "2000-01-01/01/01/11.123456");
-    let f = dt.format("YYYY-MM-DD/hh/mm/ss.000000000");
-    assert_eq!(f, "2000-01-01/01/01/11.123456789");
-}
+    let f = dt.format("YYYY-MM-DDThh:mm:ss.000");
+    assert_eq!(f, "2000-01-01T01:01:11.123");
+    let f = dt.format("YYYY-MM-DDThh:mm:ss.000000");
+    assert_eq!(f, "2000-01-01T01:01:11.123456");
+    let f = dt.format("YYYY-MM-DDThh:mm:ss.000000000");
+    assert_eq!(f, "2000-01-01T01:01:11.123456789");
 
-#[test]
-fn test_format2() {
-    let dt = fastdate::DateTime::from((
-        Date {
-            day: 1,
-            mon: 1,
-            year: 2000,
-        },
-        Time {
-            nano: 123456000,
-            sec: 11,
-            minute: 1,
-            hour: 1,
-        },
-    ))
-    .set_offset(8 * 60 * 60);
-    println!("dt={}", dt.to_string());
-    let f = dt.format("YYYY-MM-DD/hh/mm/ss.000000/+00:00");
-    assert_eq!(f, "2000-01-01/09/01/11.123456/+08:00");
-}
-
-#[test]
-fn test_format3() {
-    let dt = fastdate::DateTime::from((
-        Date {
-            day: 1,
-            mon: 1,
-            year: 2000,
-        },
-        Time {
-            nano: 123456000,
-            sec: 11,
-            minute: 1,
-            hour: 1,
-        },
-    ))
-    .set_offset(-8 * 60 * 60);
-    println!("dt={}", dt.to_string());
-    let f = dt.format("YYYY-MM-DD/hh/mm/ss.000000/+00:00");
-    assert_eq!(f, "1999-12-31/17/01/11.123456/-08:00");
+    let f = dt.format("YYYY-MM-DD hh:mm:ss.000");
+    assert_eq!(f, "2000-01-01 01:01:11.123");
+    let f = dt.format("YYYY-MM-DD hh:mm:ss.000000");
+    assert_eq!(f, "2000-01-01 01:01:11.123456");
+    let f = dt.format("YYYY-MM-DD hh:mm:ss.000000000");
+    assert_eq!(f, "2000-01-01 01:01:11.123456789");
 }
 
 #[test]

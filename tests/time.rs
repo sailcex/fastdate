@@ -188,7 +188,7 @@ fn test_display_time_nano_zero() {
         hour: 0,
     };
     let mut buf: [u8; 18] = *b"00:00:00.000000000";
-    let len = d.display_time(0, &mut buf);
+    let len = d.display_time(0, &mut buf, 9);
     assert_eq!(len, 8);
 }
 
@@ -201,7 +201,7 @@ fn test_display_time_nano_zero_no() {
         hour: 0,
     };
     let mut buf: [u8; 18] = *b"00:00:00.000000000";
-    let len = d.display_time(0, &mut buf);
+    let len = d.display_time(0, &mut buf, 9);
     println!("{}", std::str::from_utf8(&buf).unwrap());
     assert_eq!(len, 18);
 }

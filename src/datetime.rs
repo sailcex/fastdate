@@ -168,8 +168,10 @@ impl DateTime {
     ///   println!("{}",dt.format("YYYY-MM-DD hh:mm:ss.000"));
     ///   println!("{}",dt.format("YYYY-MM-DD hh:mm:ss.000000"));
     ///   println!("{}",dt.format("YYYY-MM-DD hh:mm:ss.000000+00:00"));
-    ///   println!("{}",dt.format("YYYY/MM/DD/hh/mm/ss/.000000/+00:00"));
-    ///   println!("{}",dt.format("YYYY-MM-DD/hh/mm/ss"));
+    ///   println!("{}",dt.format("YYYY-MM-DDThh:mm:ss"));
+    ///   println!("{}",dt.format("YYYY-MM-DDThh:mm:ss.000"));
+    ///   println!("{}",dt.format("YYYY-MM-DDThh:mm:ss.000000"));
+    ///   println!("{}",dt.format("YYYY-MM-DDThh:mm:ss.000000+00:00"));
     ///
     /// ```
     pub fn format(&self, fmt: &str) -> String {
@@ -179,52 +181,10 @@ impl DateTime {
         let add_sub = if offset >= 0 { '+' } else { '-' };
         let mut result = String::with_capacity(fmt.len());
         let chars = fmt.as_bytes();
-        let mut index = 0;
         let mut iter = chars.iter();
         while let Some(c) = iter.next() {
             result.push(*c as char);
-            if result.ends_with(".000000000") {
-                for _ in 0..".000000000".len() {
-                    result.pop();
-                }
-                write!(result, ".{:09}", self.nano()).unwrap()
-            } else if result.ends_with(".000000") {
-                if (index + 3) < fmt.len()
-                    && chars[index + 1] == '0' as u8
-                    && chars[index + 2] == '0' as u8
-                    && chars[index + 3] == '0' as u8
-                {
-                    index += 1;
-                    continue;
-                }
-                for _ in 0..".000000".len() {
-                    result.pop();
-                }
-                write!(result, ".{:06}", self.nano() / 1000).unwrap();
-            } else if result.ends_with(".000") {
-                if (index + 6) < fmt.len()
-                    && chars[index + 1] == '0' as u8
-                    && chars[index + 2] == '0' as u8
-                    && chars[index + 3] == '0' as u8
-                    && chars[index + 4] == '0' as u8
-                    && chars[index + 5] == '0' as u8
-                    && chars[index + 6] == '0' as u8
-                {
-                    index += 1;
-                    continue;
-                }
-                for _ in 0..".000".len() {
-                    result.pop();
-                }
-                write!(result, ".{:03}", self.nano() / 1000000).unwrap();
-            } else if result.ends_with("+00:00") {
-                for _ in 0.."+00:00".len() {
-                    result.pop();
-                }
-                h = h.abs();
-                m = m.abs();
-                write!(result, "{}{:02}:{:02}", add_sub, h, m).unwrap();
-            } else if result.ends_with("YYYY") {
+            if result.ends_with("YYYY") {
                 for _ in 0.."YYYY".len() {
                     result.pop();
                 }
@@ -255,8 +215,49 @@ impl DateTime {
                 }
                 write!(result, "{:02}", self.sec()).unwrap();
             }
-            index += 1;
         }
+        
+        // end_with
+        if result.ends_with(".000000000") {
+            for _ in 0..9 {
+                result.pop();
+            }
+            write!(result, "{:09}", self.nano()).unwrap()
+        } else if result.ends_with(".000000") {
+            for _ in 0..6 {
+                result.pop();
+            }
+            write!(result, "{:06}", self.nano() / 1000).unwrap();
+        } else if result.ends_with(".000") {
+            for _ in 0..3 {
+                result.pop();
+            }
+            write!(result, "{:03}", self.nano() / 1000000).unwrap();
+        } else if result.ends_with("+00:00") {
+            for _ in 0..6 {
+                result.pop();
+            }
+            h = h.abs();
+            m = m.abs();
+
+            if result.ends_with(".000000000") {
+                for _ in 0..9 {
+                    result.pop();
+                }
+                write!(result, "{:09}{}{:02}:{:02}", self.nano(), add_sub, h, m).unwrap();
+            } else if result.ends_with(".000000") {
+                for _ in 0..6 {
+                    result.pop();
+                }
+                write!(result, "{:06}{}{:02}:{:02}", self.nano() / 1000, add_sub, h, m).unwrap();
+            } else if result.ends_with(".000") {
+                for _ in 0..3 {
+                    result.pop();
+                }
+                write!(result, "{:03}{}{:02}:{:02}", self.nano() / 1000000, add_sub, h, m).unwrap();
+            }
+        }
+
         result
     }
 
@@ -515,7 +516,7 @@ impl DateTime {
         buf[8] = b'0' + (day / 10);
         buf[9] = b'0' + (day % 10);
         let time = Time::from(self.clone());
-        let mut len = time.display_time(11, buf);
+        let mut len = time.display_time(11, buf, 9);
         if add_zone {
             let offset = self.offset();
             if offset == 0 {

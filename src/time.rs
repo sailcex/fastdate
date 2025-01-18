@@ -158,43 +158,42 @@ impl Time {
         self.hour
     }
 
-    /// display time and return len
-    pub fn display_time(&self, start: usize, buf: &mut [u8]) -> usize {
+    /// display time and return len, nano_len: 3/6/9
+    pub fn display_time(&self, start: usize, buf: &mut [u8], mut nano_len: usize) -> usize {
         buf[start + 0] = b'0' + (self.hour / 10) as u8;
         buf[start + 1] = b'0' + (self.hour % 10) as u8;
         buf[start + 3] = b'0' + (self.minute / 10) as u8;
         buf[start + 4] = b'0' + (self.minute % 10) as u8;
         buf[start + 6] = b'0' + (self.sec / 10) as u8;
         buf[start + 7] = b'0' + (self.sec % 10) as u8;
-        let mut real_len = start + 1 + 8 + 8 + 1;
-        buf[start + 8] = b'.';
-        buf[start + 9] = b'0' + (self.nano / 100000000 % 10) as u8;
-        buf[start + 10] = b'0' + (self.nano / 10000000 % 10) as u8;
-        buf[start + 11] = b'0' + (self.nano / 1000000 % 10) as u8;
-        buf[start + 12] = b'0' + (self.nano / 100000 % 10) as u8;
-        buf[start + 13] = b'0' + (self.nano / 10000 % 10) as u8;
-        buf[start + 14] = b'0' + (self.nano / 1000 % 10) as u8;
-        buf[start + 15] = b'0' + (self.nano / 100 % 10) as u8;
-        buf[start + 16] = b'0' + (self.nano / 10 % 10) as u8;
-        buf[start + 17] = b'0' + (self.nano % 10) as u8;
+
         if self.nano == 0 {
-            real_len = real_len - 10;
+            nano_len = 0;
         } else {
-            let current = real_len;
-            let mut last_zero = false;
-            for i in 0..8 {
-                let i = current - 1 - i;
-                if buf[i] == b'0' {
-                    last_zero = true;
+            if nano_len >= 3 {
+                buf[start + 8] = b'.';
+                buf[start + 9] = b'0' + (self.nano / 100000000 % 10) as u8;
+                buf[start + 10] = b'0' + (self.nano / 10000000 % 10) as u8;
+                buf[start + 11] = b'0' + (self.nano / 1000000 % 10) as u8;
+
+                if nano_len >= 6 {
+                    buf[start + 12] = b'0' + (self.nano / 100000 % 10) as u8;
+                    buf[start + 13] = b'0' + (self.nano / 10000 % 10) as u8;
+                    buf[start + 14] = b'0' + (self.nano / 1000 % 10) as u8;
+
+                    if nano_len >= 9 {
+                        buf[start + 15] = b'0' + (self.nano / 100 % 10) as u8;
+                        buf[start + 16] = b'0' + (self.nano / 10 % 10) as u8;
+                        buf[start + 17] = b'0' + (self.nano % 10) as u8;
+                        nano_len = 9;
+                    }
                 }
-                if last_zero == true && buf[i] == b'0' {
-                    real_len -= 1;
-                } else {
-                    break;
-                }
+
+                nano_len += 1;
             }
         }
-        real_len
+        
+        start + 8 + nano_len
     }
 }
 
@@ -239,7 +238,7 @@ impl Display for Time {
     /// fmt RFC3339Micro = "2006-01-02T15:04:05.999999999"
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         let mut buf: [u8; 18] = *b"00:00:00.000000000";
-        let len = self.display_time(0, &mut buf);
+        let len = self.display_time(0, &mut buf, 9);
         f.write_str(std::str::from_utf8(&buf[..len]).unwrap())
     }
 }
@@ -302,7 +301,7 @@ mod test {
             hour: 8,
         };
         let mut buf: [u8; 18] = *b"00:00:00.000000000";
-        d.display_time(0, &mut buf);
+        d.display_time(0, &mut buf, 9);
         assert_eq!(
             "08:00:00.000123456",
             String::from_utf8(buf.to_vec()).unwrap()

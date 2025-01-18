@@ -151,7 +151,7 @@ fn main(){
             hour: 1,
         },
     ));
-    let str:String = dt.format("YYYY-MM-DD/hh/mm/ss");
+    let str:String = dt.format("YYYY-MM-DDThh:mm:ss");
     //befor,after
     let date1 = DateTime::from_str("2022-12-12 00:00:00").unwrap();
     let date2 = DateTime::from_str("2022-12-12 01:00:00").unwrap();
