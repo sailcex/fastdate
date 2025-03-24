@@ -114,16 +114,16 @@ impl Date {
 
     /// display date and return len
     pub fn display_date(&self, start: usize, buf: &mut [u8]) -> usize {
-        buf[start + 0] = b'0' + (self.year / 1000) as u8;
+        buf[start] = b'0' + (self.year / 1000) as u8;
         buf[start + 1] = b'0' + (self.year / 100 % 10) as u8;
         buf[start + 2] = b'0' + (self.year / 10 % 10) as u8;
         buf[start + 3] = b'0' + (self.year % 10) as u8;
 
-        buf[start + 5] = b'0' + (self.mon / 10) as u8;
-        buf[start + 6] = b'0' + (self.mon % 10) as u8;
+        buf[start + 5] = b'0' + (self.mon / 10);
+        buf[start + 6] = b'0' + (self.mon % 10);
 
-        buf[start + 8] = b'0' + (self.day / 10) as u8;
-        buf[start + 9] = b'0' + (self.day % 10) as u8;
+        buf[start + 8] = b'0' + (self.day / 10);
+        buf[start + 9] = b'0' + (self.day % 10);
 
         start + 10
     }
